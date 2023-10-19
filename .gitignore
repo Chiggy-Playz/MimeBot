@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+
+# IDEs
+.vscode/
+
+# Environment
+venv/
+env/
+*.env
+.venv/
+
+# Dependencies
+lib/
+lib64/
+bin/
+include/
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+
+# Config file
+config.py
