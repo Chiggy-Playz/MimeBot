@@ -49,7 +49,7 @@ class MimeCog(commands.Cog):
         self.bot = bot
         self.ctx_menu = app_commands.ContextMenu(
             name="Add to collection",
-            callback=self.add_from_context, 
+            callback=self.add_from_context,
         )
         self.bot.tree.add_command(self.ctx_menu)
 
@@ -87,15 +87,26 @@ class MimeCog(commands.Cog):
             await context.send("No emojis were found!")
             return
 
-        # Add assets to user's collection
+        # Add assets to all assets and then to user's unassigned assets
+
         await context.bot.pool.executemany(
-            "INSERT INTO assets (user_id, asset_type, asset_id, animated) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
+            "INSERT INTO assets (id, type, animated) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+            [
+                (
+                    asset.asset_id,
+                    asset.asset_type.name,
+                    asset.animated,
+                )
+                for asset in parsed_assets
+            ],
+        )
+
+        await context.bot.pool.executemany(
+            "INSERT INTO unassigned_assets (user_id, asset_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
             [
                 (
                     context.author.id,
-                    asset.asset_type.name,
                     asset.asset_id,
-                    asset.animated,
                 )
                 for asset in parsed_assets
             ],
@@ -104,7 +115,6 @@ class MimeCog(commands.Cog):
         await context.send(f"Added {len(parsed_assets)} emoji(s) to your collection!")
 
     async def add_from_context(self, interaction: discord.Interaction, message: discord.Message) -> None:
-
         await interaction.response.defer(ephemeral=True)
 
         # Parse args and replied message content for emojis / stickers
@@ -127,15 +137,26 @@ class MimeCog(commands.Cog):
             await interaction.followup.send("No emojis were found!", ephemeral=True)
             return
 
-        # Add assets to user's collection
+        # Add assets to all assets and then to user's unassigned assets
+
         await self.bot.pool.executemany(
-            "INSERT INTO assets (user_id, asset_type, asset_id, animated) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
+            "INSERT INTO assets (id, type, animated) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+            [
+                (
+                    asset.asset_id,
+                    asset.asset_type.name,
+                    asset.animated,
+                )
+                for asset in parsed_assets
+            ],
+        )
+
+        await self.bot.pool.executemany(
+            "INSERT INTO unassigned_assets (user_id, asset_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
             [
                 (
                     interaction.user.id,
-                    asset.asset_type.name,
                     asset.asset_id,
-                    asset.animated,
                 )
                 for asset in parsed_assets
             ],
