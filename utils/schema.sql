@@ -25,7 +25,9 @@ CREATE TABLE IF NOT EXISTS "packs" (
     user_id BIGINT NOT NULL,
     pack_id SERIAL NOT NULL,
     name TEXT NOT NULL,
-    PRIMARY KEY (pack_id)
+    identifier TEXT NOT NULL,
+    PRIMARY KEY (pack_id),
+    UNIQUE (user_id, identifier)
 );
 
 CREATE TABLE IF NOT EXISTS "pack_contents" (
