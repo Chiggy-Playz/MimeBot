@@ -7,7 +7,7 @@ import discord
 
 from bot import MimeBot
 
-BASE_PREFIX = environ.get("mime.prefix") or "m."
+BASE_PREFIX = environ.get("MIME_PREFIX") or "m."
 
 
 def prefix_callable(bot: MimeBot, msg: discord.Message):
@@ -21,7 +21,7 @@ async def main():
 
 
 async def run_bot(session: aiohttp.ClientSession):
-    pool = await asyncpg.create_pool(environ.get("mime.psql"))
+    pool = await asyncpg.create_pool(environ.get("MIME_PSQL"))
     assert pool is not None
     
     bot = MimeBot(
@@ -33,7 +33,7 @@ async def run_bot(session: aiohttp.ClientSession):
         case_insensitive=True,
     )
 
-    TOKEN = environ.get("mime.token")
+    TOKEN = environ.get("MIME_TOKEN")
     assert TOKEN is not None
 
     async with bot:
