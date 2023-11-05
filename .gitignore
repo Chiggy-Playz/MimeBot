@@ -28,3 +28,4 @@ build/
 
 # Config file
 config.py
+config.env
