@@ -10,7 +10,15 @@ from bot import MimeBot
 from models.asset import Asset, AssetType
 from views.confirm import ConfirmView
 
-ASSET_REGEX = r"emojis/(?P<emojiLinkId>[0-9]+)\.(?P<emojiExtension>[a-zA-Z]+)|stickers/(?P<stickerLinkId>[0-9]+)\.(?P<stickerExtension>[a-zA-Z]+)|<(?P<emojiAnimated>(a)?):[a-zA-Z]+:(?P<emojiId>[0-9]+)>"
+ASSET_REGEX = (
+
+    # Match emojis url
+    r"emojis/(?P<emojiLinkId>[0-9]+)\.(?P<emojiExtension>[a-zA-Z]+)(?:\?.*?&?name=(?P<emojiLinkName>[a-zA-Z0-9_\- ]+)?)?"
+    # Match stickers url
+    r"|stickers/(?P<stickerLinkId>[0-9]+)\.(?P<stickerExtension>[a-zA-Z]+)(?:\?.*?&?name=(?P<stickerName>[a-zA-Z0-9_\- ]+)?)?"
+    # Match raw emoji
+    r"|<(?P<emojiAnimated>(a)?):(?P<emojiName>[a-zA-Z0-9_\- ]+):(?P<emojiId>[0-9]+)>"
+)
 
 
 def parse_assets(content: str) -> list[Asset]:
@@ -24,17 +32,20 @@ def parse_assets(content: str) -> list[Asset]:
             asset_type = AssetType.emoji
             asset_id = int(groups["emojiLinkId"])
             animated = groups["emojiExtension"] == "gif"
+            asset_name = groups["emojiLinkName"] or str(asset_id)
         elif groups["stickerLinkId"] is not None:
             asset_type = AssetType.sticker
             asset_id = int(groups["stickerLinkId"])
             # Probably never gonna happen since gif sticker's are uploaded as attachments
             animated = groups["stickerExtension"] == "gif"
+            asset_name = groups["stickerName"] or str(asset_id)
         else:  # It's _probably_ <:name:id>
             asset_type = AssetType.emoji
             asset_id = int(groups["emojiId"])
             animated = groups["emojiAnimated"] != ""
+            asset_name = groups["emojiName"] or str(asset_id)
 
-        asset = Asset(asset_type, asset_id, animated)
+        asset = Asset(asset_type, asset_id, asset_name, animated)
 
         if asset in parsed_assets:
             continue
@@ -50,6 +61,8 @@ class MimeCog(commands.Cog):
         self.ctx_menu = app_commands.ContextMenu(
             name="Add to collection",
             callback=self.add_from_context,
+            allowed_contexts=app_commands.AppCommandContext(guild=True, dm_channel=True, private_channel=True),
+            allowed_installs=app_commands.AppInstallationType(guild=True, user=True),
         )
         self.bot.tree.add_command(self.ctx_menu)
 

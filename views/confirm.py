@@ -19,4 +19,3 @@ class ConfirmView(discord.ui.View):
         self.value = False
         self.stop()
         await interaction.message.delete()  # type: ignore
- 

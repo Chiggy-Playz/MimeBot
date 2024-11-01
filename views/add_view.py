@@ -6,6 +6,7 @@ from discord.ui import Select, View, Button
 from models.asset import Asset, AssetType
 from main import MimeBot
 
+
 class AddAssetsDropdown(Select):
     assets: list[Asset]
 
@@ -32,7 +33,6 @@ class AddAssetsDropdown(Select):
     async def callback(self, interaction: Interaction[MimeBot]):
         await interaction.response.send_message("Selecting", ephemeral=True)
 
-    
 
 class AddAssetsView(View):
     dropdowns: list[AddAssetsDropdown]
