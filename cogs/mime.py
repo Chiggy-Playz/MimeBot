@@ -103,19 +103,20 @@ class MimeCog(commands.Cog):
         # Add assets to all assets and then to user's unassigned assets
 
         await context.bot.pool.executemany(
-            "INSERT INTO assets (id, type, animated) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+            "INSERT INTO assets (id, name, animated, type) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
             [
                 (
                     asset.asset_id,
-                    asset.asset_type.name,
+                    asset.name,
                     asset.animated,
+                    asset.asset_type.name,
                 )
                 for asset in parsed_assets
             ],
         )
 
         await context.bot.pool.executemany(
-            "INSERT INTO unassigned_assets (user_id, asset_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+            "INSERT INTO user_assets (user_id, asset_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
             [
                 (
                     context.author.id,
@@ -153,19 +154,20 @@ class MimeCog(commands.Cog):
         # Add assets to all assets and then to user's unassigned assets
 
         await self.bot.pool.executemany(
-            "INSERT INTO assets (id, type, animated) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+            "INSERT INTO assets (id, name, animated, type) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
             [
                 (
                     asset.asset_id,
-                    asset.asset_type.name,
+                    asset.name,
                     asset.animated,
+                    asset.asset_type.name,
                 )
                 for asset in parsed_assets
             ],
         )
 
         await self.bot.pool.executemany(
-            "INSERT INTO unassigned_assets (user_id, asset_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+            "INSERT INTO user_assets (user_id, asset_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
             [
                 (
                     interaction.user.id,
