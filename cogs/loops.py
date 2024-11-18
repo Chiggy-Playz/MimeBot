@@ -5,7 +5,7 @@ if TYPE_CHECKING:
 
 class Loops(commands.Cog):
 
-    def __init__(self, bot: MimeBot):
+    def __init__(self, bot: "MimeBot"):
         self.bot = bot
     
     async def cog_load(self) -> None:
@@ -20,5 +20,5 @@ class Loops(commands.Cog):
     async def before_loop(self):
         await self.bot.wait_until_ready()
 
-async def setup(bot: MimeBot):
+async def setup(bot: "MimeBot"):
     await bot.add_cog(Loops(bot))
