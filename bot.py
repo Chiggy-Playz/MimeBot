@@ -18,6 +18,7 @@ class MimeBot(commands.Bot):
     async def setup_hook(self) -> None:
         await self.load_extension("jishaku")
         await self.load_extension("cogs.mime")
+        await self.load_extension("cogs.loops")
 
     async def on_ready(self):
         print(f"{self.user} has connected to Discord!")
