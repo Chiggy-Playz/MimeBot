@@ -11,7 +11,6 @@ from models.asset import Asset, AssetType
 from views.confirm import ConfirmView
 
 ASSET_REGEX = (
-
     # Match emojis url
     r"emojis/(?P<emojiLinkId>[0-9]+)\.(?P<emojiExtension>[a-zA-Z]+)(?:\?.*?&?name=(?P<emojiLinkName>[a-zA-Z0-9_\- ]+)?)?"
     # Match stickers url

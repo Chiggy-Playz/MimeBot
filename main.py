@@ -21,7 +21,10 @@ async def main():
 
 
 async def run_bot(session: aiohttp.ClientSession):
-    pool = await asyncpg.create_pool(environ.get("MIME_PSQL"),statement_cache_size=0,)
+    pool = await asyncpg.create_pool(
+        environ.get("MIME_PSQL"),
+        statement_cache_size=0,
+    )
     assert pool is not None
 
     bot = MimeBot(
