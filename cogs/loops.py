@@ -18,4 +18,4 @@ class Loops(commands.Cog):
         await self.bot.wait_until_ready()
 
 async def setup(bot):
-    bot.add_cog(Loops(bot))
+    await bot.add_cog(Loops(bot))
